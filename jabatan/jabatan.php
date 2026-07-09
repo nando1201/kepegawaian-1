@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 <html>
 <head>
-    <title>Latihan</title>
+    <title>Jabatan </title>
      <style>
         th {
             background: #2563eb; 
