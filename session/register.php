@@ -3,34 +3,43 @@ session_start();
 require "../config/database.php";
 
 $error = "";
-
-if (isset($_SESSION['username'])) {
-    header("Location: ../index.php");
-    exit;
-}
+$success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
-        $sql = "SELECT username FROM users WHERE username = ? AND password = ?";
-        $stmt = $koneksi->prepare($sql);
+    if ($username == "" || $password == "") {
+        $error = "Username dan password wajib diisi.";
+    } else {
+        // Cek apakah username sudah dipakai
+        $cekSql = "SELECT username FROM users WHERE username = ?";
+        $cekStmt = $koneksi->prepare($cekSql);
+        $cekStmt->bind_param("s", $username);
+        $cekStmt->execute();
 
-        $stmt->bind_param("ss", $username, $password);
-        $stmt->execute();
+        $hasilCek = $cekStmt->get_result();
 
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $_SESSION['username'] = $username;
-
-            header("Location: ../index.php");
-            exit;
+        if ($hasilCek->num_rows > 0) {
+            $error = "Username sudah digunakan. Silakan pakai username lain.";
         } else {
-            $error = "Username atau password salah.";
+            // Simpan akun baru
+            $insertSql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            $insertStmt = $koneksi->prepare($insertSql);
+            $insertStmt->bind_param("ss", $username, $password);
+
+            if ($insertStmt->execute()) {
+                header("Location: login.php?register=berhasil");
+                exit;
+            } else {
+                $error = "Registrasi gagal. Silakan coba lagi.";
+            }
+
+            $insertStmt->close();
         }
 
-    $stmt->close();
+        $cekStmt->close();
+    }
 }
 
 $koneksi->close();
@@ -97,17 +106,12 @@ $koneksi->close();
 <body>
 
     <div class="login-card">
-        <h1>Login</h1>
-        <p>Masuk ke Sistem Data Pegawai</p>
+        <h1>Register</h1>
+        <p>Daftar untuk mendapatkan akun</p>
 
         <?php if ($error != "") { ?>
             <div class="error"><?php echo $error; ?></div>
         <?php } ?>
-        <?php if (isset($_GET['register']) && $_GET['register'] == "berhasil") { ?>
-            <div style="background:#dcfce7; color:#166534; padding:10px; text-align:center; border-radius:5px; margin-bottom:15px;">
-                Registrasi berhasil. Silakan login.
-            </div>
-            <?php } ?>
 
         <form method="post">
             <label>Username</label>
@@ -116,8 +120,8 @@ $koneksi->close();
             <label>Password</label>
             <input type="password" name="password" required>
 
-            <button type="submit">Login</button>
-            <p>Belum punya akun? <a href="register.php">Daftar</a></p>
+            <button type="submit">Register</button>
+            <p>Sudah Punya Akun? <a href="login.php">Login</a></p>
         </form>
     </div>
 

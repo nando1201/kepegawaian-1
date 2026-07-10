@@ -41,7 +41,7 @@
                     <td colspan="2" align="center">
                         <input type="submit" name="simpan" value="Simpan">
                         <input type="reset" name="batal" value="Reset">
-                        &nbsp; <a href="index.php">Kembali</a>
+                        &nbsp; <a href="../index.php">Kembali</a>
                     </td>
                 </tr>
             </table>

@@ -71,6 +71,9 @@
         border-radius: 4px;
         transition: background-color 0.3s;
     }
+    .btn-add:hover {
+        background-color: #1e40af;
+    }
     a {
         text-decoration: none;
         color: #2563eb;
@@ -83,8 +86,9 @@
             <nav class="navbar">
                 <div class="navbar-title">Sistem Data Pegawai</div> 
                 <ul> 
-                 <li><a href="jabatanpegawai/jabatanpegawai.php">Jabatan Pegawai</a></li> 
-                 <li><a href="jabatan/jabatan.php">Jabatan</a></li> 
+                    <li><a href="jabatanpegawai/jabatanpegawai.php">Jabatan Pegawai</a></li> 
+                    <li><a href="jabatan/jabatan.php">Jabatan</a></li> 
+                    <li><a href="session/logout.php" >Logout</a></li>
                 </ul>
             </nav>
             <table >
